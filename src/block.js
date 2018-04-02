@@ -10,7 +10,7 @@ class Block {
         this.hash = this.calculateHash();
     }
     calculateHash () {
-        return sha256(this.prevHash + this.timeStamp.toString() + this.nonce.toString() + this.merkleRoot);
+        return sha256(this.prevHash + this.timeStamp + this.nonce + this.merkleRoot);
     }
     mineBlock (diff) {
         this.merkleRoot = getMerkleRoot(this.transactions);
@@ -25,12 +25,12 @@ class Block {
         if (!transaction) return false;
         if (this.prevHash !== '0') {
             if (!transaction.processTransaction()) {
-                console.log('Transaction failed to process. Discarded.');
+                console.log('\nTransaction failed to process. Discarded.');
                 return false;
             }
         }
         this.transactions.push(transaction);
-        console.log('Transaction Successfully added to Block!');
+        console.log('\nTransaction successfully added to block!');
         return true;
     }
 }

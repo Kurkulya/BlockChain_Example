@@ -1,5 +1,5 @@
 const EC = require('elliptic').ec;
-const UncorfimedTransactions = require('./UTXOs');
+const UnspentTransactions = require('./UTXOs');
 const Transaction = require('./transaction');
 const TransactionInput = require('./transactionInput');
 
@@ -15,10 +15,10 @@ class Wallet {
     }
     getBalance () {
         let total = 0;
-        const UTXOs = UncorfimedTransactions.getUTXOs();
+        const UTXOs = UnspentTransactions.getUTXOs(); // get all unspent transactions
         Object.values(UTXOs).forEach(item => {
-           if (item.isMine(this.publicKey)) {
-               this.UTXOs[item.id] = item;
+           if (item.isMine(this.publicKey)) { // if unspent transaction belong to your wallet, confirm your balance
+               this.UTXOs[item.id] = item;  // add unspent transaction as proof of coin receive
                total += item.value;
            }
         });
@@ -29,16 +29,16 @@ class Wallet {
             console.log('Not enough money! Balance: ' + this.getBalance());
             return null;
         }
+
         let inputs = [];
         let total = 0;
-        Object.values(this.UTXOs).forEach(item => {
+        Object.values(this.UTXOs).forEach(item => { // for all wallet's unspent transactions
             total += item.value;
-            inputs.push(new TransactionInput(item.id));
+            inputs.push(new TransactionInput(item.id)); // push unspent transaction id as proof of balance to create new transaction
             if (total > value) return false;
         });
         const newTransaction = new Transaction(this, reciepient, value, inputs);
-        newTransaction.generateSignature();
-        inputs.forEach(input => delete this.UTXOs[input.transactionOutputId]);
+        inputs.forEach(input => delete this.UTXOs[input.transactionOutputId]); // remove spent transactions from wallets unspent proof
         return newTransaction;
     }
 }

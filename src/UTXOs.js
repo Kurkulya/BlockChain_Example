@@ -1,6 +1,6 @@
 const UTXOs = {};
 
-class UncorfimedTransactions {
+class UnspentTransactions {
     static addUTXO (transaction) {
         UTXOs[transaction.id] = transaction;
     };
@@ -12,4 +12,4 @@ class UncorfimedTransactions {
     };
 }
 
-module.exports = UncorfimedTransactions;
+module.exports = UnspentTransactions;
